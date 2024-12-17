@@ -16,7 +16,8 @@ export const crearJugador = async (jugadorData: any) => {
       }
   
       const response = await axios.post(
-        'http://localhost:5000/api/admin',
+        'https://backend-hipolito-unanue.onrender.com/api/admin',
+        // 'http://localhost:5000/api/admin',
         jugadorData,
         {
           headers: {
@@ -47,7 +48,8 @@ export const crearJugador = async (jugadorData: any) => {
   
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/admin/${_id}`,
+        `https://backend-hipolito-unanue.onrender.com/api/admin/${_id}`,
+        // `http://localhost:5000/api/admin/${_id}`,
         jugador,
         {
           headers: {
@@ -70,7 +72,8 @@ export const crearJugador = async (jugadorData: any) => {
     if (!token) throw new Error('No se ha encontrado un token válido.');
   
     try {
-      const response = await axios.delete(`http://localhost:5000/api/admin/${id}`, {
+      const response = await axios.delete(`https://backend-hipolito-unanue.onrender.com/api/admin/${id}`, {
+        // const response = await axios.delete(`http://localhost:5000/api/admin/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
