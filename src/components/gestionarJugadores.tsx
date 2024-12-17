@@ -8,12 +8,32 @@ import { Jugador } from "../types/types";
 import { useAuth } from "../hooks/useAuth";
 import { obtenerJugadores } from "../services/api";
 
+const posiciones = [
+  { valor: "ED", etiqueta: "Extremo Derecho" },
+  { valor: "EI", etiqueta: "Extremo Izquierdo" },
+  { valor: "SD", etiqueta: "Segundo Delantero" },
+  { valor: "DC", etiqueta: "Delantero Centro" },
+  { valor: "MCD", etiqueta: "Mediocampista Defensivo" },
+  { valor: "MC", etiqueta: "Mediocampista Central" },
+  { valor: "MD", etiqueta: "Mediocampista Derecho" },
+  { valor: "MI", etiqueta: "Mediocampista Izquierdo" },
+  { valor: "MCO", etiqueta: "Mediocampista Ofensivo" },
+  { valor: "CAD", etiqueta: "Carrilero Derecho" },
+  { valor: "CAI", etiqueta: "Carrilero Izquierdo" },
+  { valor: "DFC", etiqueta: "Defensa Central" },
+  { valor: "LD", etiqueta: "Lateral Derecho" },
+  { valor: "LI", etiqueta: "Lateral Izquierdo" },
+  { valor: "POR", etiqueta: "Portero" },
+];
+
+const nacionalidades = ["Perú", "Venezuela", "Brasil", "Colombia", "Argentina"];
+
 const GestionarJugadores = () => {
   const { usuario } = useAuth();
   const [jugadores, setJugadores] = useState<Jugador[]>([]);
   const [jugadorActual, setJugadorActual] = useState<Jugador | null>(null);
   const [mensaje, setMensaje] = useState<string>("");
-  const [cargando, setCargando] = useState(false);
+  const [, setCargando] = useState(false);
   const [modalAbierto, setModalAbierto] = useState(false);
 
   useEffect(() => {
@@ -99,7 +119,9 @@ const GestionarJugadores = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Gestionar Jugadores</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Gestionar Jugadores
+      </h1>
 
       {mensaje && <p className="text-center text-green-500 mb-4">{mensaje}</p>}
 
@@ -118,37 +140,116 @@ const GestionarJugadores = () => {
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="grid gap-4">
-                {[
-                  { label: "Nombre", field: "nombre", type: "text", required: true },
-                  { label: "Apellidos", field: "apellidos", type: "text" },
-                  { label: "Apodo", field: "apodo", type: "text" },
-                  { label: "Nacionalidad", field: "nacionalidad", type: "text" },
-                  { label: "Posición", field: "posicion", type: "text" },
-                  { label: "Goles", field: "goles", type: "number" },
-                  { label: "Asistencias", field: "asistencias", type: "number" },
-                  { label: "Partidos Ganados", field: "partidosGanados", type: "number" },
-                  { label: "Partidos Perdidos", field: "partidosPerdidos", type: "number" },
-                ].map(({ label, field, type, required }) => (
-                  <div key={field}>
-                    <label
-                      htmlFor={field}
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      {label}
-                    </label>
-                    <input
-                      id={field}
-                      type={type}
-                      value={(jugadorActual as any)?.[field] || ""}
-                      onChange={(e) =>
-                        handleInputChange(field as keyof Jugador, type === "number" ? +e.target.value : e.target.value)
-                      }
-                      required={required}
-                      className="p-3 border rounded-md shadow-sm focus:ring-2 focus:ring-purple-600 w-full"
-                    />
-                  </div>
-                ))}
+                <div>
+                  <label
+                    htmlFor="nombre"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Nombre
+                  </label>
+                  <input
+                    id="nombre"
+                    type="text"
+                    value={jugadorActual?.nombre || ""}
+                    onChange={(e) =>
+                      handleInputChange("nombre", e.target.value)
+                    }
+                    required
+                    className="p-3 border rounded-md shadow-sm focus:ring-2 focus:ring-purple-600 w-full"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="apellidos"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Apellido
+                  </label>
+                  <input
+                    id="apellidos"
+                    type="text"
+                    value={jugadorActual?.apellidos || ""}
+                    onChange={(e) =>
+                      handleInputChange("apellidos", e.target.value)
+                    }
+                    className="p-3 border rounded-md shadow-sm focus:ring-2 focus:ring-purple-600 w-full"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="apodo"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Apodo
+                  </label>
+                  <input
+                    id="apodo"
+                    type="text"
+                    value={jugadorActual?.apodo || ""}
+                    onChange={(e) =>
+                      handleInputChange("apodo", e.target.value)
+                    }
+                    className="p-3 border rounded-md shadow-sm focus:ring-2 focus:ring-purple-600 w-full"
+                  />
+                </div>
+
+                {/* Campo de posición */}
+                <div>
+                  <label
+                    htmlFor="posicion"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Posición
+                  </label>
+                  <select
+                    id="posicion"
+                    value={jugadorActual?.posicion || ""}
+                    onChange={(e) =>
+                      handleInputChange("posicion", e.target.value)
+                    }
+                    required
+                    className="p-3 border rounded-md shadow-sm focus:ring-2 focus:ring-purple-600 w-full"
+                  >
+                    <option value="" disabled>
+                      Selecciona una posición
+                    </option>
+                    {posiciones.map((pos) => (
+                      <option key={pos.valor} value={pos.valor}>
+                        {pos.etiqueta}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Campo de nacionalidad */}
+                <div>
+                  <label
+                    htmlFor="nacionalidad"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Nacionalidad
+                  </label>
+                  <select
+                    id="nacionalidad"
+                    value={jugadorActual?.nacionalidad || ""}
+                    onChange={(e) =>
+                      handleInputChange("nacionalidad", e.target.value)
+                    }
+                    required
+                    className="p-3 border rounded-md shadow-sm focus:ring-2 focus:ring-purple-600 w-full"
+                  >
+                    <option value="" disabled>
+                      Selecciona una nacionalidad
+                    </option>
+                    {nacionalidades.map((nac) => (
+                      <option key={nac} value={nac}>
+                        {nac}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+
               <div className="flex justify-between mt-6">
                 <button
                   type="submit"
@@ -179,8 +280,6 @@ const GestionarJugadores = () => {
               <th className="p-3 border">Apodo</th>
               <th className="p-3 border">Nacionalidad</th>
               <th className="p-3 border">Posición</th>
-              <th className="p-3 border">Goles</th>
-              <th className="p-3 border">Partidos Jugados</th>
               <th className="p-3 border">Acciones</th>
             </tr>
           </thead>
@@ -192,10 +291,6 @@ const GestionarJugadores = () => {
                 <td className="p-3 border">{jugador.apodo}</td>
                 <td className="p-3 border">{jugador.nacionalidad}</td>
                 <td className="p-3 border">{jugador.posicion}</td>
-                <td className="p-3 border">{jugador.goles}</td>
-                <td className="p-3 border">
-                  {jugador.partidosGanados + jugador.partidosPerdidos}
-                </td>
                 <td className="p-3 border flex justify-center space-x-2">
                   <button
                     className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition shadow-md"
