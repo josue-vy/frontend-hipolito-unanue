@@ -145,7 +145,7 @@ const FeedbackJugador = () => {
                       </label>
                       <input
                         type="number"
-                        value={(jugadorActual as any)[field] || 0}
+                        value={(jugadorActual as any)[field] || ""}
                         disabled
                         className="p-3 border rounded-md shadow-sm bg-gray-100 text-gray-700 w-full"
                       />
@@ -156,7 +156,7 @@ const FeedbackJugador = () => {
                       </label>
                       <input
                         type="number"
-                        value={(estadisticasAdicionales as any)[field] || 0}
+                        value={(estadisticasAdicionales as any)[field] || ""}
                         onChange={(e) =>
                           handleInputChange(
                             field as keyof typeof estadisticasAdicionales,
