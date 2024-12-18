@@ -35,6 +35,7 @@ const GestionarJugadores = () => {
   const [mensaje, setMensaje] = useState<string>("");
   const [, setCargando] = useState(false);
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [confirmacionEliminar, setConfirmacionEliminar] = useState<string | null>(null);
 
   useEffect(() => {
     if (usuario) {
@@ -83,7 +84,9 @@ const GestionarJugadores = () => {
     }
   };
 
-  const handleEliminar = async (id: string) => {
+  const handleEliminar = async () => {
+    if (!confirmacionEliminar) return;
+
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -93,15 +96,24 @@ const GestionarJugadores = () => {
 
     try {
       setCargando(true);
-      await eliminarJugador(id);
+      await eliminarJugador(confirmacionEliminar);
       setMensaje("Jugador eliminado exitosamente");
-      setJugadores(jugadores.filter((j) => j._id !== id));
+      setJugadores(jugadores.filter((j) => j._id !== confirmacionEliminar));
+      setConfirmacionEliminar(null);
     } catch (error) {
       console.error("Error al eliminar jugador", error);
       setMensaje("Error al eliminar el jugador");
     } finally {
       setCargando(false);
     }
+  };
+
+  const confirmarEliminacion = (id: string) => {
+    setConfirmacionEliminar(id);
+  };
+
+  const cancelarEliminacion = () => {
+    setConfirmacionEliminar(null);
   };
 
   const handleInputChange = (field: keyof Jugador, value: string | number) => {
@@ -270,48 +282,62 @@ const GestionarJugadores = () => {
         </div>
       )}
 
+      {/* Ventana emergente de confirmación */}
+      {confirmacionEliminar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full sm:w-96">
+            <h2 className="text-xl font-semibold mb-4">
+              ¿Estás seguro de que deseas eliminar este jugador?
+            </h2>
+            <div className="flex justify-between mt-6">
+              <button
+                onClick={handleEliminar}
+                className="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition duration-300 shadow-md"
+              >
+                Sí, Eliminar
+              </button>
+              <button
+                onClick={cancelarEliminacion}
+                className="bg-gray-400 text-white py-2 px-6 rounded-md hover:bg-gray-500 transition duration-300 shadow-md"
+              >
+                No, Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <h2 className="text-2xl font-semibold mb-4">Lista de Jugadores</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg">
-          <thead>
-            <tr className="bg-purple-600 text-white">
-              <th className="p-3 border">Nombre</th>
-              <th className="p-3 border">Apellidos</th>
-              <th className="p-3 border">Apodo</th>
-              <th className="p-3 border">Nacionalidad</th>
-              <th className="p-3 border">Posición</th>
-              <th className="p-3 border">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {jugadores.map((jugador) => (
-              <tr key={jugador._id} className="hover:bg-gray-100">
-                <td className="p-3 border">{jugador.nombre}</td>
-                <td className="p-3 border">{jugador.apellidos}</td>
-                <td className="p-3 border">{jugador.apodo}</td>
-                <td className="p-3 border">{jugador.nacionalidad}</td>
-                <td className="p-3 border">{jugador.posicion}</td>
-                <td className="p-3 border flex justify-center space-x-2">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition shadow-md"
-                    onClick={() => {
-                      setJugadorActual(jugador);
-                      setModalAbierto(true);
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition shadow-md"
-                    onClick={() => handleEliminar(jugador._id!)}
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {jugadores.map((jugador) => (
+          <div
+            key={jugador._id}
+            className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
+          >
+            <h3 className="text-xl font-semibold mb-2">{jugador.nombre}</h3>
+            <p className="text-sm text-gray-600">Apellido: {jugador.apellidos}</p>
+            <p className="text-sm text-gray-600">Apodo: {jugador.apodo}</p>
+            <p className="text-sm text-gray-600">Posición: {jugador.posicion}</p>
+            <p className="text-sm text-gray-600">Nacionalidad: {jugador.nacionalidad}</p>
+            <div className="mt-4 flex justify-between">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition shadow-md"
+                onClick={() => {
+                  setJugadorActual(jugador);
+                  setModalAbierto(true);
+                }}
+              >
+                Editar
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition shadow-md"
+                onClick={() => confirmarEliminacion(jugador._id!)}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

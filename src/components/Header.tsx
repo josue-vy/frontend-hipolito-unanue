@@ -4,22 +4,22 @@ import { iniciarSesion, cerrarSesion } from "../services/authService";
 import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
-  const [menuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [error, setError] = useState(""); 
-  const [successMessage, setSuccessMessage] = useState(""); 
-  const [modalOpen, setModalOpen] = useState(false); 
-  const [confirmLogout, setConfirmLogout] = useState(false); 
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const { usuario, login, logout } = useAuth();
 
   const handleLogin = async () => {
-    setError(""); 
+    setError("");
     try {
       const decodedUser = await iniciarSesion(correo, contrasena);
       login(decodedUser);
-      setSuccessMessage("Inicio de sesión exitoso"); 
-      setModalOpen(false); 
+      setSuccessMessage("Inicio de sesión exitoso");
+      setModalOpen(false);
 
       setTimeout(() => {
         setSuccessMessage("");
@@ -31,33 +31,121 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    setConfirmLogout(true); 
+    setConfirmLogout(true);
   };
 
   const confirmLogoutAction = () => {
     cerrarSesion();
     logout();
-    setCorreo(""); 
-    setContrasena(""); 
-    setConfirmLogout(false); 
+    setCorreo("");
+    setContrasena("");
+    setConfirmLogout(false);
   };
 
   const cancelLogoutAction = () => {
-    setConfirmLogout(false); 
+    setConfirmLogout(false);
   };
 
-  const toggleModal = () => setModalOpen(!modalOpen); 
+  const toggleModal = () => setModalOpen(!modalOpen);
+
+  // Toggle the mobile menu
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
     <header className="bg-gray-900 shadow-lg p-4 fixed w-full top-0 left-0 z-50">
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
         <div className="text-3xl font-bold text-purple-600">
-          <Link to="/">Hipolite Sport</Link> {/* Cambiar a Link */}
+          <Link to="/">Hipolite Sport</Link>
+        </div>
+        {/* Botón de menú para dispositivos móviles */}
+        <button onClick={toggleMenu} className="md:hidden text-white p-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+
+        {/* Menú desplegable en móvil */}
+        <div
+          className={`absolute top-0 left-0 w-full bg-gray-800 p-6 transition-transform ${
+            menuOpen ? "block" : "hidden"
+          }`}
+        >
+          <div className="flex flex-col space-y-4">
+            <div
+              className="text-3xl font-bold text-purple-600"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Link to="/">Hipolite Sport</Link>
+            </div>
+            <Link
+              to="#"
+              className="text-gray-300 hover:text-white"
+              onClick={() => setMenuOpen(false)}
+            >
+              Temporadas
+            </Link>
+            <Link
+              to="#"
+              className="text-gray-300 hover:text-white"
+              onClick={() => setMenuOpen(false)}
+            >
+              Nosotros
+            </Link>
+            {usuario?.rol === "admin" && (
+              <>
+                <Link
+                  to="/gestionar-jugadores"
+                  className="text-gray-300 hover:text-white"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Gestionar Jugadores
+                </Link>
+                <Link
+                  to="/feedback-jugador"
+                  className="text-gray-300 hover:text-white"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Feedback Jugador
+                </Link>
+              </>
+            )}
+            {/* Botón de Cerrar Sesión o Iniciar Sesión */}
+            {usuario ? (
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white py-2 rounded-lg"
+              >
+                Cerrar Sesión
+              </button>
+            ) : (
+              <button
+                onClick={toggleModal}
+                className="bg-purple-600 text-white py-2 rounded-lg"
+              >
+                Iniciar Sesión
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Links de navegación */}
-        <nav className={`md:flex space-x-6 ${menuOpen ? "block" : "hidden"} md:block`}>
+        {/* Barra de navegación para escritorio */}
+        <nav
+          className={`md:flex space-x-6 ${
+            menuOpen ? "block" : "hidden"
+          } md:block`}
+        >
           <Link
             to="#"
             className="text-gray-300 hover:text-white transition duration-300"
@@ -89,10 +177,10 @@ const Header = () => {
         </nav>
 
         {/* Botones de acción */}
-        <div className="space-x-4">
+        <div className="space-x-4 hidden md:block">
           {!usuario ? (
             <button
-              onClick={toggleModal} // Abrir el modal cuando se haga clic
+              onClick={toggleModal}
               className="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
             >
               Iniciar Sesión
@@ -136,13 +224,8 @@ const Header = () => {
             >
               Iniciar Sesión
             </button>
-            {successMessage && (
-              <p className="text-green-500 text-sm mt-2 text-center">
-                {successMessage}
-              </p>
-            )}
             <button
-              onClick={toggleModal} // Cerrar el modal
+              onClick={toggleModal}
               className="w-full mt-4 text-gray-500 hover:text-gray-700 transition duration-300"
             >
               Cancelar

@@ -101,9 +101,9 @@ const JugadoresList = () => {
           </li>
           <li>
             <span className="font-semibold text-green-500">
-              Saque de esquina:
+              Saque de lateral:
             </span>{" "}
-            El saque de esquina debe realizarse fuera del área del equipo
+            El saque de lateral debe realizarse fuera del área del equipo
             contrario para ser válido.
           </li>
         </ul>

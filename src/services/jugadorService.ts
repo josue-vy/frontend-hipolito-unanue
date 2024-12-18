@@ -11,7 +11,7 @@ export const crearJugador = async (jugadorData: any) => {
   
     try {
       // Verificar que el jugadorData esté completo antes de enviarlo
-      if (!jugadorData.nombre || !jugadorData.apellidos) {
+      if (!jugadorData.nombre) {
         throw new Error('Faltan datos requeridos para crear el jugador');
       }
   

@@ -98,40 +98,25 @@ const FeedbackJugador = () => {
       {mensaje && <p className="text-center text-green-500 mb-4">{mensaje}</p>}
 
       <h2 className="text-2xl font-semibold mb-4">Lista de Jugadores</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg">
-          <thead>
-            <tr className="bg-purple-600 text-white">
-              <th className="p-3 border">Nombre</th>
-              <th className="p-3 border">Apodo</th>
-              <th className="p-3 border">Goles</th>
-              <th className="p-3 border">Asistencias</th>
-              <th className="p-3 border">Partidos Ganados</th>
-              <th className="p-3 border">Partidos Perdidos</th>
-              <th className="p-3 border">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {jugadores.map((jugador) => (
-              <tr key={jugador._id} className="hover:bg-gray-100">
-                <td className="p-3 border">{jugador.nombre}</td>
-                <td className="p-3 border">{jugador.apodo}</td>
-                <td className="p-3 border">{jugador.goles}</td>
-                <td className="p-3 border">{jugador.asistencias}</td>
-                <td className="p-3 border">{jugador.partidosGanados}</td>
-                <td className="p-3 border">{jugador.partidosPerdidos}</td>
-                <td className="p-3 border flex justify-center space-x-2">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition shadow-md"
-                    onClick={() => abrirModal(jugador)}
-                  >
-                    Editar Estadísticas
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {jugadores.map((jugador) => (
+          <div
+            key={jugador._id}
+            className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300"
+          >
+            <h3 className="text-xl font-semibold text-purple-600">{jugador.nombre}</h3>
+            <p className="text-gray-600">Goles: {jugador.goles}</p>
+            <p className="text-gray-600">Asistencias: {jugador.asistencias}</p>
+            <p className="text-gray-600">Partidos Ganados: {jugador.partidosGanados}</p>
+            <p className="text-gray-600">Partidos Perdidos: {jugador.partidosPerdidos}</p>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition mt-4"
+              onClick={() => abrirModal(jugador)}
+            >
+              Editar Estadísticas
+            </button>
+          </div>
+        ))}
       </div>
 
       {modalAbierto && jugadorActual && (
