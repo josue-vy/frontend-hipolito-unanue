@@ -60,7 +60,7 @@ const JugadoresList = () => {
 
 
   if (loading) {
-    return <div className="text-center text-xl text-gray-200">Cargando...</div>;
+    return <div className="mt-24 text-center text-xl text-green-800">Cargando...</div>;
   }
 
   if (error) {

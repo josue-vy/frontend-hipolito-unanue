@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { iniciarSesion, cerrarSesion } from "../services/authService";
 import { useAuth } from "../hooks/useAuth";
 
@@ -6,88 +7,83 @@ const Header = () => {
   const [menuOpen] = useState(false);
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [error, setError] = useState(""); // Para manejar el error de inicio de sesión
-  const [successMessage, setSuccessMessage] = useState(""); // Para manejar el mensaje de éxito
-  const [modalOpen, setModalOpen] = useState(false); // Para controlar la apertura del modal de login
-  const [confirmLogout, setConfirmLogout] = useState(false); // Para controlar la confirmación de cerrar sesión
+  const [error, setError] = useState(""); 
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const [modalOpen, setModalOpen] = useState(false); 
+  const [confirmLogout, setConfirmLogout] = useState(false); 
   const { usuario, login, logout } = useAuth();
 
   const handleLogin = async () => {
-    setError(""); // Limpiar el error al intentar iniciar sesión nuevamente
+    setError(""); 
     try {
       const decodedUser = await iniciarSesion(correo, contrasena);
       login(decodedUser);
-      setSuccessMessage("Inicio de sesión exitoso"); // Mostrar mensaje de éxito
-      setModalOpen(false); // Cerrar el modal después de iniciar sesión
+      setSuccessMessage("Inicio de sesión exitoso"); 
+      setModalOpen(false); 
 
-      // Ocultar el mensaje de éxito después de 2 segundos
       setTimeout(() => {
         setSuccessMessage("");
       }, 2000);
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      setError("Correo o contraseña incorrectos"); // Mostrar error si las credenciales son incorrectas
+      setError("Correo o contraseña incorrectos");
     }
   };
 
   const handleLogout = () => {
-    setConfirmLogout(true); // Mostrar modal de confirmación para cerrar sesión
+    setConfirmLogout(true); 
   };
 
   const confirmLogoutAction = () => {
     cerrarSesion();
     logout();
-    setCorreo(""); // Limpiar el correo al cerrar sesión
-    setContrasena(""); // Limpiar la contraseña al cerrar sesión
-    setConfirmLogout(false); // Cerrar el modal de confirmación
+    setCorreo(""); 
+    setContrasena(""); 
+    setConfirmLogout(false); 
   };
 
   const cancelLogoutAction = () => {
-    setConfirmLogout(false); // Cerrar el modal de confirmación sin cerrar sesión
+    setConfirmLogout(false); 
   };
 
-  const toggleModal = () => setModalOpen(!modalOpen); // Alternar la visibilidad del modal
+  const toggleModal = () => setModalOpen(!modalOpen); 
 
   return (
     <header className="bg-gray-900 shadow-lg p-4 fixed w-full top-0 left-0 z-50">
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
         <div className="text-3xl font-bold text-purple-600">
-          <a href="/">Hipolite Sport</a>
+          <Link to="/">Hipolite Sport</Link> {/* Cambiar a Link */}
         </div>
 
         {/* Links de navegación */}
-        <nav
-          className={`md:flex space-x-6 ${
-            menuOpen ? "block" : "hidden"
-          } md:block`}
-        >
-          <a
-            href="#"
+        <nav className={`md:flex space-x-6 ${menuOpen ? "block" : "hidden"} md:block`}>
+          <Link
+            to="#"
             className="text-gray-300 hover:text-white transition duration-300"
           >
             Temporadas
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="#"
             className="text-gray-300 hover:text-white transition duration-300"
           >
             Nosotros
-          </a>
+          </Link>
           {usuario?.rol === "admin" && (
             <>
-              <a
-                href="/gestionar-jugadores"
+              <Link
+                to="/gestionar-jugadores"
                 className="text-gray-300 hover:text-white transition duration-300"
               >
                 Gestionar Jugadores
-              </a>
-              <a
-                href="/feedback-jugador"
+              </Link>
+              <Link
+                to="/feedback-jugador"
                 className="text-gray-300 hover:text-white transition duration-300"
               >
                 Feedback Jugador
-              </a>
+              </Link>
             </>
           )}
         </nav>
